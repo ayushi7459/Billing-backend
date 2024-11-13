@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 
@@ -24,7 +25,7 @@ const userSchema = new Schema({
         unique: [true, "Phone number is already in use."],
         validate: {
             validator: function(v) {
-              return v.length === 10;  // Replace 10 with your desired length
+              return v.toString().length === 10;  // Replace 10 with your desired length
             },
             message: props => `${props.value} is not a valid phone number!`
           }

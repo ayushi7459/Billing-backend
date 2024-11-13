@@ -1,118 +1,55 @@
-import { userModel } from "../models/userModel.js";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
 
-// Register a new user
-export const registerUser = async (req, res) => {
-    const { username, email, mobile_number, password } = req.body;
+import { userModel } from '../models/users.js';
 
+// Get a single user by ID
+export const getUserById = async (req, res) => {
     try {
-        // Check if the user already exists
-        const existingUser = await userModel.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists." });
-        }
-
-        // Create a new user
-        const newUser = new userModel({ username, email, mobile_number, password });
-        await newUser.save();
-
-        // Generate tokens
-        const accessToken = await newUser.generateAccessToken();
-        const refreshToken = await newUser.generateRefreshToken();
-
-        // Save the refresh token
-        newUser.refreshToken = refreshToken;
-        await newUser.save();
-
-        res.status(201).json({
-            message: "User registered successfully",
-            accessToken,
-            refreshToken
-        });
-    } catch (error) {
-        res.status(500).json({ message: "Error registering user", error });
-    }
-};
-
-// Login a user
-export const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        // Check if the user exists
-        const user = await userModel.findOne({ email });
+        const user = await userModel.findById(req.params.id);
         if (!user) {
-            return res.status(400).json({ message: "Invalid email or password" });
+            return res.status(404).json({ message: 'User not found' });
         }
-
-        // Check if the password is correct
-        const isPasswordCorrect = await user.isPasswordCorrect(password);
-        if (!isPasswordCorrect) {
-            return res.status(400).json({ message: "Invalid email or password" });
-        }
-
-        // Generate tokens
-        const accessToken = await user.generateAccessToken();
-        const refreshToken = await user.generateRefreshToken();
-
-        // Save the refresh token
-        user.refreshToken = refreshToken;
-        await user.save();
-
-        res.status(200).json({
-            message: "Login successful",
-            accessToken,
-            refreshToken
-        });
+        res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ message: "Error logging in", error });
+        res.status(500).json({ message: error.message });
     }
 };
 
-// Refresh access token
-export const refreshAccessToken = async (req, res) => {
-    const { refreshToken } = req.body;
-
+// Get all users
+export const getAllUsers = async (req, res) => {
     try {
-        if (!refreshToken) {
-            return res.status(401).json({ message: "Refresh token required" });
-        }
-
-        // Verify the refresh token
-        const decoded = jwt.verify(refreshToken, process.env.REFERESH_TOKEN_SECRET);
-        
-        // Find the user
-        const user = await userModel.findById(decoded._id);
-        if (!user || user.refreshToken !== refreshToken) {
-            return res.status(403).json({ message: "Invalid refresh token" });
-        }
-
-        // Generate a new access token
-        const accessToken = await user.generateAccessToken();
-        res.status(200).json({ accessToken });
+        const users = await userModel.find({});
+        res.status(200).json(users);
     } catch (error) {
-        res.status(403).json({ message: "Invalid or expired refresh token", error });
+        res.status(500).json({ message: error.message });
     }
 };
 
-// Logout a user (clear the refresh token)
-export const logoutUser = async (req, res) => {
-    const { refreshToken } = req.body;
-
+// Update user by ID
+export const updateUser = async (req, res) => {
     try {
-        // Find the user with the given refresh token
-        const user = await userModel.findOne({ refreshToken });
-        if (!user) {
-            return res.status(400).json({ message: "User not found" });
+        const updatedUser = await userModel.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true, runValidators: true } // Return the updated user
+        );
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found' });
         }
-
-        // Clear the refresh token
-        user.refreshToken = null;
-        await user.save();
-
-        res.status(200).json({ message: "User logged out successfully" });
+        res.status(200).json({ message: 'User updated successfully', updatedUser });
     } catch (error) {
-        res.status(500).json({ message: "Error logging out", error });
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Delete user by ID
+export const deleteUser = async (req, res) => {
+    try {
+        const deletedUser = await userModel.findByIdAndDelete(req.params.id);
+        if (!deletedUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.status(200).json({ message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
     }
 };
