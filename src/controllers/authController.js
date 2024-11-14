@@ -26,7 +26,7 @@ export const registerUser = async (req, res) => {
         // Save the user to the database
         await newUser.save();
 
-        res.status(201).json({ message: "User registered successfully" });
+        res.status(201).json({ message: "User registered successfully" , User : newUser});
     } catch (error) {
         if (error.code === 11000) {  // Duplicate key error
             return res.status(400).json({ message: "Username or email already exists" });

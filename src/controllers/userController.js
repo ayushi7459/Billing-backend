@@ -15,14 +15,16 @@ export const getUserById = async (req, res) => {
 };
 
 // Get all users
+// Get all active users (not marked as deleted)
 export const getAllUsers = async (req, res) => {
     try {
-        const users = await userModel.find({});
+        const users = await userModel.find({ isDeleted: 0 });
         res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
+
 
 // Update user by ID
 export const updateUser = async (req, res) => {
@@ -41,14 +43,19 @@ export const updateUser = async (req, res) => {
     }
 };
 
-// Delete user by ID
 export const deleteUser = async (req, res) => {
     try {
-        const deletedUser = await userModel.findByIdAndDelete(req.params.id);
-        if (!deletedUser) {
-            return res.status(404).json({ message: 'User not found' });
+        const user = await userModel.findByIdAndUpdate(
+            req.params.id,
+            { isDeleted: 1 },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
         }
-        res.status(200).json({ message: 'User deleted successfully' });
+
+        res.status(200).json({ message: "User marked as deleted" });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
