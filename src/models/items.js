@@ -16,6 +16,11 @@ const itemSchema = new Schema({
         ref : 'Category',
         required: [true, "Category is required"]
     },
+    userId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref : 'user',
+        required: [true, "user is required"]
+    },
     sellPrice: {
         type: Number,
         required: [true, "Sell price is required"]

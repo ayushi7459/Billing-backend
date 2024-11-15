@@ -5,29 +5,34 @@ export const createCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
         
-        const newCategory = new categoryModel({ name, description });
-        await newCategory.save();
+        const newCategory = new categoryModel({
+            name,
+            description,
+            userId: req.user._id 
+        });
         
+        await newCategory.save();
         res.status(201).json({ message: 'Category created successfully', category: newCategory });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// Get all categories
+// Get all categories for the current user
 export const getAllCategories = async (req, res) => {
     try {
-        const categories = await categoryModel.find();
+        const categories = await categoryModel.find({ userId: req.user._id });
         res.status(200).json({ categories });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 };
 
-// Get a single category by ID
+// Get a single category by ID for the current user
 export const getCategoryById = async (req, res) => {
     try {
-        const category = await categoryModel.findById(req.params.id);
+       
+        const category = await categoryModel.findOne({ _id: req.params.id, userId: req.user._id });
         if (!category) {
             return res.status(404).json({ message: 'Category not found' });
         }
@@ -37,13 +42,14 @@ export const getCategoryById = async (req, res) => {
     }
 };
 
-// Update a category by ID
+// Update a category by ID for the current user
 export const updateCategory = async (req, res) => {
     try {
         const { name, description } = req.body;
 
-        const updatedCategory = await categoryModel.findByIdAndUpdate(
-            req.params.id,
+       
+        const updatedCategory = await categoryModel.findOneAndUpdate(
+            { _id: req.params.id, userId: req.user._id },
             { name, description },
             { new: true, runValidators: true }
         );
@@ -58,10 +64,14 @@ export const updateCategory = async (req, res) => {
     }
 };
 
-// Delete a category by ID
+// Delete a category by ID for the current user
 export const deleteCategory = async (req, res) => {
     try {
-        const deletedCategory = await categoryModel.findByIdAndDelete(req.params.id);
+        
+        const deletedCategory = await categoryModel.findOneAndDelete({
+            _id: req.params.id,
+            userId: req.user._id
+        });
         
         if (!deletedCategory) {
             return res.status(404).json({ message: 'Category not found' });

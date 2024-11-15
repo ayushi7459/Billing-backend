@@ -10,6 +10,11 @@ const categorySchema = new mongoose.Schema({
     description: {
         type: String,
         trim: true
+    },
+    userId:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref : "user",
+        required: [true, "user is required"]
     }
 }, { timestamps: true });
 

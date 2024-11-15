@@ -1,11 +1,11 @@
 
 import express from 'express';
-import { getUserById, getAllUsers, updateUser, deleteUser } from '../controllers/userController.js';
+import { getUserById, updateUser, deleteUser } from '../controllers/userController.js';
 
 const router = express.Router();
 
-// Route to get all users
-router.get('/', getAllUsers);
+// // Route to get all users
+// router.get('/', getAllUsers);//only admin can do this
 
 // Route to get a specific user by ID
 router.get('/:id', getUserById);

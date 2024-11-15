@@ -37,6 +37,11 @@ const userSchema = new Schema({
     refreshToken:{
         type:String,
     },
+    role: {
+        type: String,
+        enum: ['admin', 'user'],  // Only admin or user roles allowed
+        default: 'user'
+    },
     isDeleted: {
         type: Number,
         default: 0 // 0 for active, 1 for deleted
