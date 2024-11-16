@@ -2,11 +2,12 @@
 import express from 'express';
 import { getUserById,getAllUsers, updateUser, deleteUser } from '../controllers/userController.js';
 import {isAdmin} from '../middlewares/Admin.js';
+import { authenticateUser } from '../middlewares/Authenticate.js';
 
 const router = express.Router();
 
 // // Route to get all users
-router.get('/', isAdmin,  getAllUsers);//only admin can do this
+router.get('/', authenticateUser, isAdmin,  getAllUsers);//only admin can do this
 
 // Route to get a specific user by ID
 router.get('/:id', getUserById);

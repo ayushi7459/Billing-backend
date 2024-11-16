@@ -8,16 +8,12 @@ const userSchema = new Schema({
     username:{
         type: String,
         required : true,
-        unique : true,
         trim:true,
-        index:true
     },
     Business_name:{
         type: String,
         required : true,
-        unique : true,
-        trim:true,
-        index:true
+        unique:false
     },
     email:{
         type : String,
@@ -72,7 +68,8 @@ userSchema.methods.generateAccessToken = async function(){
         {
             _id:this._id,
             emial:this.email,
-            username:this.username
+            username:this.username,
+            role : this.role
         },
         process.env.ACCESS_TOKEN_SECRET,
         {

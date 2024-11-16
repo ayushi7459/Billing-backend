@@ -6,11 +6,11 @@ import { ApiError } from '../utils/ApiErrors.js';
 
 // Register User
 export const registerUser = asyncHandler(async (req, res) => {
-    const { username,Business_name, email, password, mobile_number } = req.body;
+    const { username,Business_name, email, password, mobile_number,role } = req.body;
 
     // Check if user already exists by email or username
     const existingUser = await userModel.findOne({
-        $or: [{ email }, { username }]
+        $or: [{ email }, { mobile_number }]
     });
     if (existingUser) {
         throw new ApiError(400, "User already exists");
@@ -25,6 +25,8 @@ export const registerUser = asyncHandler(async (req, res) => {
         mobile_number,
         role
     });
+    // console.log(newUser);
+    
 
     // Save the user to the database
     await newUser.save();
