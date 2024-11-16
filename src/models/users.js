@@ -12,6 +12,13 @@ const userSchema = new Schema({
         trim:true,
         index:true
     },
+    Business_name:{
+        type: String,
+        required : true,
+        unique : true,
+        trim:true,
+        index:true
+    },
     email:{
         type : String,
         required :true,
@@ -21,6 +28,7 @@ const userSchema = new Schema({
     },
     mobile_number:{
         type : Number,
+        required :true,
         default: 0,
         unique: [true, "Phone number is already in use."],
         validate: {

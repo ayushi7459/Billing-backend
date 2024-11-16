@@ -10,6 +10,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 
 
 
+
 const app = express();
 
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use(express.urlencoded({extended:true,
     limit:"16kb"
 }))
 app.use(express.static("public"))
+
 
 // Authentication routes
 app.use('/api/auth', authRoutes);

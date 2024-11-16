@@ -6,7 +6,7 @@ import { ApiError } from '../utils/ApiErrors.js';
 
 // Register User
 export const registerUser = asyncHandler(async (req, res) => {
-    const { username, email, password, mobile_number } = req.body;
+    const { username,Business_name, email, password, mobile_number } = req.body;
 
     // Check if user already exists by email or username
     const existingUser = await userModel.findOne({
@@ -19,9 +19,11 @@ export const registerUser = asyncHandler(async (req, res) => {
     // Create a new user
     const newUser = new userModel({
         username,
+        Business_name,
         email,
         password,
-        mobile_number
+        mobile_number,
+        role
     });
 
     // Save the user to the database

@@ -3,6 +3,7 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { ApiResponce } from '../utils/ApiResponce.js';
 import { ApiError } from '../utils/ApiErrors.js';
 
+
 // Get a single user by ID
 export const getUserById = asyncHandler(async (req, res) => {
     const user = await userModel.findById(req.params.id);
@@ -39,3 +40,11 @@ export const deleteUser = asyncHandler(async (req, res) => {
     }
     res.status(200).json(new ApiResponce(200, null, "User marked as deleted"));
 });
+
+// Get all users (only for admins)
+export const getAllUsers = asyncHandler(async (req, res) => {
+    const users = await userModel.find({ role: 'user' }); // Get all users with role 'user'
+    res.status(200).json(new ApiResponce(200, users, "Users fetched successfully"));
+});
+
+

@@ -1,11 +1,12 @@
 
 import express from 'express';
-import { getUserById, updateUser, deleteUser } from '../controllers/userController.js';
+import { getUserById,getAllUsers, updateUser, deleteUser } from '../controllers/userController.js';
+import {isAdmin} from '../middlewares/Admin.js';
 
 const router = express.Router();
 
 // // Route to get all users
-// router.get('/', getAllUsers);//only admin can do this
+router.get('/', isAdmin,  getAllUsers);//only admin can do this
 
 // Route to get a specific user by ID
 router.get('/:id', getUserById);
@@ -14,6 +15,6 @@ router.get('/:id', getUserById);
 router.put('/:id', updateUser);
 
 // Route to delete a specific user by ID
-router.delete('/:id', deleteUser);
+router.delete('/:id', isAdmin, deleteUser);
 
 export default router;
